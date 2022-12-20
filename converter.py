@@ -1,217 +1,222 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Author: neouyghur
+'''
+
+# Original Author: neouyghur
 # Mail: osmanjan.t@gmail.com
 # Licence: MIT License
+# Contributor: Setare <https://github.com/saeziae>
 
-# kiskartmilar
-# uas: uyghur arab yeziqi
-# cts: ortaq turk yeziqi
+ULS(Uyghur Latin Script) ULY(Uyghur Latin Yëziqi)
+UAS(Uyghur Arabic Script) UEY(Uyghur Ereb Yëziqi)
+CTS(Common Turkic Script) OTA(Ortaq Türkche Alfabet)
+UCS(Uyghur Cyrillic Script) USY(Uyghur Siril Yëziqi)
+UNS(Uyghur New Script) UYY(Uyghur Yëngi Yëziqi)
+TT(Toponymy Transcription) SASM/GNC romanization
 
-import io
-import codecs
+'''
 import re
-import os.path
-import sys
+
 
 class UgScriptConverter:
-    # Check if input is Uyghur character
-    # Uyghurchimu emesmu
-    def isU(self, herp):
-        m = re.search('[\u0621-\u06ff]', herp, re.UNICODE) # re.UNICODE is important
+    # following may be not necessary , '“', '„', '&#8220;', '&#8222;', '”', '‟', '&#8221;', '&#8223;']
+    __uas_group1 = ['ا', 'ە', 'ب', 'پ', 'ت', 'ج', 'چ', 'خ', 'د', 'ر', 'ز', 'ژ', 'س', 'ش', 'ف', 'ڭ', 'ل',
+                    'م', 'ھ', 'و', 'ۇ', 'ۆ', 'ۈ', 'ۋ', 'ې', 'ى', 'ي', 'ق', 'ك', 'گ', 'ن', 'غ', 'ئ',
+                    '؟', '،', '؛', '٭', '۔']
+    # following may be not necessary, '«', '«', '«', '«', '»', '»', '»', '»']
+    __cts_group1 = ['a', 'e', 'b', 'p', 't', 'c', 'ç', 'x', 'd', 'r', 'z', 'j', 's', 'ş', 'f', 'ñ', 'l',
+                    'm', 'h', 'o', 'u', 'ö', 'ü', 'v', 'é', 'i', 'y', 'q', 'k', 'g', 'n', 'ğ', "'",
+                    '?', ',', ';', '*', '-']
+    __ucs_group1 = ['а', 'ә', 'б', 'п', 'т', 'җ', 'ч', 'х', 'д', 'р', 'з', 'ж', 'с', 'ш', 'ф', 'ң', 'л',
+                    'м', 'һ', 'о', 'у', 'ө', 'ү', 'в', 'е', 'и', 'й', 'қ', 'к', 'г', 'н', 'ғ', "'",
+                    '?', ',', ';', '*', '-']
+
+    def isPureUyghurScript(herp):
+        m = re.search('[\u0621-\u06ff]', herp)
         if m == None:
-            return False;
+            return False
         else:
             return True
 
-    # UAS to CTS
-    def UA2CT(self, text):
-        # This group characters have similar properties
-        # uas: uyghur arab yeziqi
-        # cts: birleshken turk yeziqi
-
-        uas_group1 = [u'ا', u'ە', u'ب', u'پ', u'ت', u'ج', u'چ', u'خ', u'د', u'ر', u'ز', u'ژ', u'س', u'ش', u'ف', u'ڭ', u'ل',\
-         u'لا', u'م', u'ھ', u'و', u'ۇ', u'ۆ', u'ۈ', u'ۋ', u'ې', u'ى', u'ي', u'ق', u'ك', u'گ', u'ن', u'غ', u'ئ', u'؟', u'،', u'؛',\
-         u'٭']
-         # following may be not necessary
-         #, u'“', u'„', u'&#8220;', u'&#8222;', u'”', u'‟', u'&#8221;', u'&#8223;']
-
-        cts_group1 = [u'a', u'e',  u'b', u'p', u't', u'c', u'ç', u'x', u'd', u'r', u'z', u'j', u's', u'ş', u'f', u'ñ', u'l',\
-         u'la', u'm', u'h', u'o', u'u', u'ö', u'ü', u'v', u'é', u'i', u'y', u'q', u'k', u'g', u'n', u'ğ', u"'", u'?', u',', u';',\
-         u'*']
-         # following may be not necessary
-         #, u'«', u'«', u'«', u'«', u'»', u'»', u'»', u'»']
-
-        map1 = dict(zip(uas_group1, cts_group1))
-        change = True # For control EMZE, u'ئ'
-        output = herp = '' #text[pos]
-        pos = 0
-        size = len(text)
-        while (pos < size):
-            # To control unexpected non-unicode characters
-            try:
-                output += herp
-            except:
-                print 'Unexpected Character, please check the results!'
-                print herp
-            herp = text[pos]
-            #print herp
-            pos += 1 # go to next position
-            check = herp
-            herp = map1.get(herp, herp)
-            if herp == u"'":
-                if change == True:
-                    herp = ""
-                change = False
-
-            if check == herp:
-                change = True
-            else:
-                change = False
-
-        output += herp
-        return output
-
-    # Todo: change these codes
-    def CT2UA(self, text):
-        # This group characters have similar properties
-        text = text.lower()
-        uas_group1 = [u'ا', u'ە', u'ب', u'پ', u'ت', u'ج', u'چ', u'خ', u'د', u'ر', u'ز', u'ژ', u'س', u'ش', u'ف', u'ڭ', u'ل',\
-         u'لا', u'م', u'ھ', u'و', u'ۇ', u'ۆ', u'ۈ', u'ۋ', u'ې', u'ى', u'ي', u'ق', u'ك', u'گ', u'ن', u'غ', u'ئ', u'؟', u'،', u'؛',\
-         u'٭']
-         #, u'“',  u'”']
-
-        cts_group1 = [u'a', u'e',  u'b', u'p', u't', u'c', u'ç', u'x', u'd', u'r', u'z', u'j', u's', u'ş', u'f', u'ñ', u'l',\
-         u'la', u'm', u'h', u'o', u'u', u'ö', u'ü', u'v', u'é', u'i', u'y', u'q', u'k', u'g', u'n', u'ğ', u"'", u'?', u',', u';',\
-         u'*']
-         #, u'«', u'»']
-
-        map1 = dict(zip(cts_group1, uas_group1))
-        output = ''
-        pos = 0
-        size = len(text)
-        herp = '' #text[pos]
-        while (pos < size):
-            # To control unexpected non-unicode characters
-            try:
-                output += herp
-            except:
-                print 'Unexpected Character, please check the results!'
-                print herp
-            herp = text[pos]
-            pos += 1
-            herp = map1.get(herp, herp)
-
-        output += herp
-        output = self.revise_UAS(output)
-        return output
-
-    def CT2LA(self, text):
-    	text = text.lower()
-        text = text.replace(u'ng', u"n'g")
-        text = text.replace(u'ñ', u"ng")
-        text = text.replace(u'ç', u'@h') # don't modify the the @ sign
-        text = text.replace(u'j', u'zh')
-        text = text.replace(u'ş', u'sh')
-        text = text.replace(u"ğ", u'gh')
-        text = text.replace(u"v", u'w')
-        text = text.replace(u"é", u'ë')
-        text = text.replace(u"ñ", u'ng')
-        text = text.replace(u"c", u'j')
-
-        text = text.replace(u'@', u'c')
-
+    def _repalce_via_table(self, text, tab1, tab2):
+        for i, j in zip(tab1, tab2):
+            text = text.replace(i, j)
         return text
 
+    def UA2CT(self, text):
+        text = self._repalce_via_table(
+            text, self.__uas_group1, self.__cts_group1)
+        text = re.sub(r"(^|[aeiouöüëé ])'([aeiouöüëé])",
+                      lambda m:  m.group(1) + m.group(2), text)
+        return self._repalce_via_table(text, self.__uas_group1, self.__cts_group1)
+
+    def CT2UA(self, text):
+        text = self._repalce_via_table(
+            text, self.__cts_group1, self.__uas_group1)
+        text = self._revise_UAS(text)
+        return text
+
+    # Uyghur Latin Yëziqi
+    def CT2LA(self, text):
+        text = text.lower()
+        text = text.replace('ng', "n'g")\
+            .replace('ñ', 'ng')\
+            .replace('nğ', "n'gh") \
+            .replace('j', 'zh')\
+            .replace('c', 'j')\
+            .replace('ç', 'ch') \
+            .replace('ş', 'sh')\
+            .replace('ğ', 'gh')\
+            .replace('v', 'w')\
+            .replace('é', 'ë')
+        return text
 
     def LA2CT(self, text):
-    	text = text.lower()
-        # ch ç # zh j # sh ş # gh ğ
-        text = text.replace(u"j", u'c')
-        text = text.replace(u"ng", u'ñ')
-        text = text.replace(u"n'g", u'ng')
-        text = text.replace(u"'ng", u'ñ')
-        text = text.replace(u'ch', u'ç')
-        text = text.replace(u'zh', u'j')
-        text = text.replace(u'sh', u'ş')
-        text = text.replace(u"'gh", u'ğ')
-        text = text.replace(u"gh", u'ğ')
-        text = text.replace(u"w", u'v')
-        text = text.replace(u"ë", u'é')
-        text = text.replace(u'ch', u'ç')
-
+        text = text.lower()
+        text = text.replace('ng', 'ñ') \
+            .replace("n'g", 'ng') \
+            .replace('gh', 'ğ') \
+            .replace('ch', 'ç') \
+            .replace('j', 'c') \
+            .replace('zh', 'j') \
+            .replace('sh', 'ş') \
+            .replace('w', 'v') \
+            .replace('ë', 'é')
         return text
 
-    def CC2CT(self, text):
-    	text = text.lower()
-
-        cts_group1 = [u'a', u'e', u'b', u'p', u't', u'c', u'ç', u'x', u'd', u'r', u'z', u'j', u's', u'ş', u'f', u'ñ', u'l',\
-         u'la', u'm', u'h', u'o', u'u', u'ö', u'ü', u'v', u'é', u'i', u'y', u'q', u'k', u'g', u'n', u'ğ']
-
-        ccs_group1 = [u'а', u'ә', u'б', u'п', u'т', u'җ', u'ч', u'х', u'д', u'р', u'з', u'ж', u'с', u'ш', u'ф', u'ң', u'л',\
-         u'ла', u'м', u'һ', u'о', u'у', u'ө', u'ү', u'в', u'е', u'и', u'й', u'қ', u'к', u'г', u'н', u'ғ']
-        
-        for i, j in zip(cts_group1, ccs_group1):
-            text = text.replace(j, i)
-
+    # Uyghur Yëngi Yëziqi
+    def CT2UY(self, text):
+        text = text.lower()
+        text = text.replace('ng', "n'g")\
+            .replace('ñ', 'ng')\
+            .replace('e', 'ə')\
+            .replace('ö', 'ɵ')\
+            .replace('é', 'e')\
+            .replace('j', 'ⱬ')\
+            .replace('q', 'ⱪ')\
+            .replace('h', 'ⱨ')\
+            .replace('x', 'h')\
+            .replace('c', 'j')\
+            .replace('ç', 'q') \
+            .replace('ş', 'x')\
+            .replace('ğ', 'ƣ')
         return text
 
-    def CT2CC(self, text):
-    	text = text.lower()
-        cts_group1 = [u'a', u'e', u'b', u'p', u't', u'c', u'ç', u'x', u'd', u'r', u'z', u'j', u's', u'ş', u'f', u'ñ', u'l',\
-         u'la', u'm', u'h', u'o', u'u', u'ö', u'ü', u'v', u'é', u'i', u'y', u'q', u'k', u'g', u'n', u'ğ']
-
-        ccs_group1 = [u'а', u'ә', u'б', u'п', u'т', u'җ', u'ч', u'х', u'д', u'р', u'з', u'ж', u'с', u'ш', u'ф', u'ң', u'л',\
-         u'ла', u'м', u'һ', u'о', u'у', u'ө', u'ү', u'в', u'е', u'и', u'й', u'қ', u'к', u'г', u'н', u'ғ']
-
-        for i, j in zip(cts_group1, ccs_group1):
-            text = text.replace(i, j)
-
+    def UY2CT(self, text):
+        text = text.lower()
+        text = text.replace('ng', 'ñ')\
+            .replace("n'g", 'ng')\
+            .replace('e', 'é')\
+            .replace('ə', 'e')\
+            .replace('ö', 'ɵ')\
+            .replace('j', 'c')\
+            .replace('q', 'ç') \
+            .replace('x', 'ş')\
+            .replace('h', 'x')\
+            .replace('ⱨ', 'h')\
+            .replace('ⱬ', 'j')\
+            .replace('ⱪ', 'q')\
+            .replace('ƣ', 'ğ')
         return text
 
-    def revise_UAS(self, text):
-        output = ''
-        group1 = [' ', '-', '\n']
-        group2 = [u'ا', u'ە', u'ې', u'ى', u'و', u'ۇ', u'ۆ', u'ۈ']
-        flag = 1 
-        for ichar in text:
-            if ichar in group1:
-                flag = 1
-                output += ichar
-            elif ichar in group2:
-                if flag:
-                    output += u'ئ'
-                output += ichar
-                flag = 0
-            else:
-                output += ichar
-                flag = 0
-        return output
+    # Uyghur Siril Yëziqi
+    def UC2CT(self, text):
+        text = text.lower()
+        text = self._repalce_via_table(
+            text, self.__ucs_group1, self.__cts_group1)
+        text = text.replace("я", "ya").replace("ю", "yu")
+        return text
 
+    def CT2UC(self, text):
+        text = text.lower()
+        text = text.replace("ya", "я").replace("yu", "ю")
+        text = self._repalce_via_table(
+            text, self.__cts_group1, self.__ucs_group1)
+        return text
+
+    # (SASM/GNC romanization) Single direction only
+    def CT2TT(self, text):
+        text = text.lower()
+        text = text.replace('e', 'a')\
+            .replace('é', 'e')\
+            .replace('ö', 'o')\
+            .replace('j', 'J')\
+            .replace('q', 'k')\
+            .replace('x', 'h')\
+            .replace('c', 'j')\
+            .replace('ç', 'q') \
+            .replace('ş', 'x')\
+            .replace('ğ', 'g')\
+            .replace('ñ', 'ng')
+        text = re.sub(r"J([aeiouöü])", lambda m: "y" + m.group(1), text)
+        text = text.replace('J', 'j')
+        return text
+
+    def _revise_UAS(self, text):
+        return re.sub(r"(^|-|\s|[اەېىوۇۆۈ])([اەېىوۇۆۈ])", lambda m: m.group(1) + "ئ" + m.group(2), text)
 
     def LA2UA(self, text):
         return self.CT2UA(self.LA2CT(text))
 
+    def LA2UC(self, text):
+        return self.CT2UC(self.LA2CT(text))
+
+    def LA2UY(self, text):
+        return self.CT2UY(self.LA2CT(text))
+
+    def LA2TT(self, text):
+        return self.CT2TT(self.LA2CT(text))
+
     def UA2LA(self, text):
         return self.CT2LA(self.UA2CT(text))
 
-    def UA2CC(self, text):
-        return self.CT2CC(self.UA2CT(text))
+    def UA2UC(self, text):
+        return self.CT2UC(self.UA2CT(text))
 
-    def CC2UA(self, text):
-        return self.CT2UA(self.CC2CT(text))
+    def UA2UY(self, text):
+        return self.CT2UY(self.UA2CT(text))
 
-    def LA2CC(self, text):
-        return self.CT2CC(self.LA2CT(text))
+    def UA2TT(self, text):
+        return self.CT2TT(self.UA2CT(text))
 
-    def CC2LA(self, text):
-        return self.CT2LA(self.CC2CT(text))
+    def UC2LA(self, text):
+        return self.CT2LA(self.UC2CT(text))
 
-    def whatisthis(self, s):
-        if isinstance(s, str):
-            print "ordinary string"
-        elif isinstance(s, unicode):
-            print "unicode string"
-        else:
-            print "not a string"
+    def UC2UA(self, text):
+        return self.CT2UA(self.UC2CT(text))
+
+    def UC2UY(self, text):
+        return self.CT2UY(self.UC2CT(text))
+
+    def UC2TT(self, text):
+        return self.CT2TT(self.UC2CT(text))
+
+    def UY2UA(self, text):
+        return self.CT2UA(self.UY2CT(text))
+
+    def UY2LA(self, text):
+        return self.CT2LA(self.UY2CT(text))
+
+    def UY2UC(self, text):
+        return self.CT2UC(self.UY2CT(text))
+
+    def UY2TT(self, text):
+        return self.CT2TT(self.UY2CT(text))
+
+
+if __name__ == "__main__":
+    # Test case
+    converter = UgScriptConverter()
+    ua = "ھەممە ئادەم تۇغۇلۇشىدىنلا ئەركىن، ئىززەت۔ھۆرمەت ۋە ھوقۇقتا باب۔باراۋەر بولۇپ تۇغۇلغان. ئۇلار ئەقىلگە ۋە ۋىجدانغا ئىگە ھەمدە بىر۔بىرىگە قېرىنداشلىق مۇناسىۋىتىگە خاس روھ بىلەن مۇئامىلە قىلىشى كېرەك."
+    print("UEY: ", ua)
+    ct = converter.UA2CT(ua)
+    print("OTA: ", ct)
+    la = converter.CT2LA(ct)
+    print("ULY: ", la)
+    uc = converter.CT2UC(ct)
+    print("USY: ", uc)
+    uy = converter.CT2UY(ct)
+    print("UYY: ", uy)
+    tt = converter.CT2TT(ct)
+    print("PY : ", tt)

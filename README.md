@@ -1,8 +1,8 @@
 # Multiple-Uyghur-Script-Converter
 
-Refactored for Python 3 and Qt 5, enjoy it!
+Forked from original work, refactored for Python 3 and Qt 5, enjoy it!
 
-`python umsc_qt5.py`
+`python umsc.py`
 
 This converter converts multiple Uyghur scripts such as ULS(Uyghur Latin Script), UAS(Uyghur Arabic Script), CTS(Common Turkish Script).
 
@@ -55,21 +55,14 @@ This converter converts multiple Uyghur scripts such as ULS(Uyghur Latin Script)
 
 ## Examples
 
-| Source                                                                                                                                                                                                                      | Converted                                                                                                                                                                                                   |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| سايباغ رايونى ئۈرۈمچى شەھىرى گە قاراشلىق شەھەر رايونى بولۇپ                                                                                                                                                                 | (Toponymy Transcription) saybag rayoni ürümqi xahiri ga karaxlik xahar rayoni bolup                                                                                                                         |
-| (ULY) Uyghur tili uzaq tarixqa ige güzel tili.                                                                                                                                                                              | ئۇيغۇر تىلى ئۇزاق تارىخقا ئىگە گۈزەل تىلى.                                                                                                                                                                  |
-| (Common Turkic) eqilliq kélişim bir xil qanunluq küçke ige bolğan, aldin'ala qoşulğan kélişm yaki toxtamniñ maddiliriğan asasen aptomatik halda icira qilindiğan kompyotér pirogrammisi yaki éliktronluq élim-bérim nizami. | әқиллиқ келишим бир хил қанунлуқ күчкә игә болған, алдин'ала қошулған келишм йаки тохтамниң маддилириған асасән аптоматик һалда иҗира қилиндиған компйотер пирограммиси йаки еликтронлуқ елим-берим низами. |
-| ھەممە ئادەم تۇغۇلۇشىدىنلا ئەركىن، ئىززەت۔ھۆرمەت ۋە ھوقۇقتا باب۔باراۋەر بولۇپ تۇغۇلغان.                                                                                                                                      | (UYY) ⱨəmmə adəm tuƣuluxidinla ərkin, izzət-ⱨɵrmət və ⱨoⱪuⱪta bab-baravər bolup tuƣulƣan.                                                                                                                   |
-
-## Files
-
-| name             | info                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------- |
-| umsc_qt5.py      | Refactored main program in py3 and qt5 , uses `mainWindow_qt5.py`                           |
-| converter_py3.py | Refactored converter in py3                                                                 |
-| mainWindow.ui    | pyqt user interface                                                                         |
-| converter.py     | functions for converting                                                                    |
-| umsc.py          | main function for running the program which includes mainWindow.py and converter.py         |
-| materials        | official materials for uyghur script converter                                              |
-| php_code         | this python code is improved version of the php code which is written by Mr. Gheyret Kenji. |
+- UEY: ھەممە ئادەم تۇغۇلۇشىدىنلا ئەركىن، ئىززەت۔ھۆرمەت ۋە ھوقۇقتا باب۔باراۋەر بولۇپ تۇغۇلغان. ئۇلار ئەقىلگە ۋە ۋىجدانغا ئىگە ھەمدە بىر۔بىرىگە قېرىنداشلىق مۇناسىۋىتىگە خاس روھ بىلەن مۇئامىلە قىلىشى كېرەك.\
+  ئەقىللىق كېلىشىم بىر خىل قانۇنلۇق كۈچكە ئىگە بولغان، ئالدىنئالا قوشۇلغان كېلىشم ياكى توختامنىڭ ماددىلىرىغان ئاساسەن ئاپتوماتىك ھالدا ئىجىرا قىلىندىغان كومپيوتېر پىروگراممىسى ياكى ئېلىكترونلۇق ئېلىم۔بېرىم نىزامى.
+- ULY: hemme adem tughulushidinla erkin, izzet-hörmet we hoquqta bab-barawer bolup tughulghan. ular eqilge we wijdan'gha ige hemde bir-birige qërindashliq munasiwitige xas roh bilen muamile qilishi kërek.\
+  eqilliq këlishim bir xil qanunluq küchke ige bolghan, aldin'ala qoshulghan këlishm yaki toxtamning maddilirighan asasen aptomatik halda ijira qilindighan kompyotër pirogrammisi yaki ëliktronluq ëlim-bërim nizami.
+- Common Turkic: hemme adem tuğuluşidinla erkin, izzet-hörmet ve hoquqta bab-baraver bolup tuğulğan. ular eqilge ve vicdanğa ige hemde bir-birige qérindaşliq munasivitige xas roh bilen muamile qilişi kérek.\
+  eqilliq kélişim bir xil qanunluq küçke ige bolğan, aldin'ala qoşulğan kélişm yaki toxtamniñ maddiliriğan asasen aptomatik halda icira qilindiğan kompyotér pirogrammisi yaki éliktronluq élim-bérim nizami.
+- USY: һәммә адәм туғулушидинла әркин, иззәт-һөрмәт вә һоқуқта баб-баравәр болуп туғулған. улар әқилгә вә виҗданға игә һәмдә бир-биригә қериндашлиқ мунасивитигә хас роһ билән муамилә қилиши керәк.\
+  әқиллиқ келишим бир хил қанунлуқ күчкә игә болған, алдин'ала қошулған келишм яки тохтамниң маддилириған асасән аптоматик һалда иҗира қилиндиған компйотер пирограммиси яки еликтронлуқ елим-берим низами.
+- UYY: ⱨəmmə adəm tuƣuluxidinla ərkin, izzət-ⱨɵrmət və ⱨoⱪuⱪta bab-baravər bolup tuƣulƣan. ular əⱪilgə və vijdanƣa igə ⱨəmdə bir-birigə ⱪerindaxliⱪ munasivitigə has roⱨ bilən muamilə ⱪilixi kerək.\
+  əⱪilliⱪ kelixim bir hil ⱪanunluⱪ küqkə igə bolƣan, aldin'ala ⱪoxulƣan kelixm yaki tohtamning maddiliriƣan asasən aptomatik ⱨalda ijira ⱪilindiƣan kompyoter pirogrammisi yaki eliktronluⱪ elim-berim nizami.
+- Toponymy Transcription：saybag rayoni ürümqi xahiri ga karaxlik xahar rayoni bolup (سايباغ رايونى ئۈرۈمچى شەھىرى گە قاراشلىق شەھەر رايونى بولۇپ )
